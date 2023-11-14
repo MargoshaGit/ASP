@@ -1,0 +1,14 @@
+﻿
+@{
+    ViewData["Title"] = "Order Products";
+}
+
+<div class="text-center">
+    <form method="post" asp-controller="Order" asp-action="PlaceOrder">
+        <div class="form-group">
+            <label for="numberOfPizzas" class="display-4">How many pizzas do you want?</label>
+            <input id="numberOfPizzas" class="form-control" name="numberOfPizzas" type="number" min="1" placeholder="Type here..." />
+        </div>
+        <button type="submit" class="btn btn-primary">Order</button>
+    </form>
+</div>
