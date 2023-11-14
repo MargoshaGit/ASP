@@ -1,35 +1,70 @@
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+using Serilog;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Diagnostics;
+
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
-Company company = new Company("MyCompany", "The best company ever", 20000000);
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.File("log.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
 
-app.MapGet("/", () => company.Show());
-app.MapGet("/randomInt", () => "" + new Random().Next(0, 101));
-app.Run();
+app.UseRouting();
 
+app.UseStaticFiles();
 
-
-
-class Company
+app.UseExceptionHandler(errorApp =>
 {
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public int Price { get; set; }
-
-    public Company(string name, string description, int price)
+    errorApp.Run(async context =>
     {
-        this.Name = name;
-        this.Description = description;
-        this.Price = price;
-    }
-    public string Show()
-    {
-        return ("Name of the company: " + this.Name + 
-            "\nCompany information: " + this.Description + 
-            "\nPrice of the company: " + this.Price);
-    }
-}
+        var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
+        var exception = exceptionHandlerPathFeature.Error;
+
+        Log.Error(exception, "An unhandled exception occurred");
+
+        await context.Response.WriteAsync("An error occurred. Please check the log for details.");
+    });
+});
+
+app.MapGet("/", (HttpContext context) =>
+{
+    return context.Response.SendFileAsync("index.html");
+});
 
 
+app.MapGet("/sendToCookies", (HttpContext context) =>
+{
+    string inputValue = context.Request.Query["inputValue"];
+    string dateTimeValue = context.Request.Query["dateTimeValue"];
+    DateTime exp = DateTime.Parse(dateTimeValue);
+
+    // Set cookies with expiration
+    context.Response.Cookies.Append("InputValue", inputValue, new CookieOptions { Expires = exp });
+    context.Response.Cookies.Append("DateTimeValue", dateTimeValue, new CookieOptions { Expires = exp });
+
+    // Construct an HTML response
+    string htmlResponse = 
+    $"<html>" +
+    $"<body>" +
+        $"<span>Data has been stored in cookies.</span><br>" +
+        $"<span>InputValue: {context.Request.Cookies["InputValue"]}</span><br>" +
+        $"<span>DateTimeValue: {context.Request.Cookies["DateTimeValue"]}</span>" +
+    $"</body>" +
+    $"</html>";
+
+    // Set the content type to HTML
+    context.Response.Headers.Add("Content-Type", "text/html");
+
+    // Write the HTML response to the output
+    return context.Response.WriteAsync(htmlResponse);
+});
 
 
+app.Run();

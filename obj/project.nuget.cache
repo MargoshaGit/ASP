@@ -1,8 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "z66dWz0Z3gxhxzd/GlpkaQwX434/LwN6aTYQNNBi6mWk5KCdis8uIVOVIsRrWa49Mis95fYEpEcPv2nD5J6kpA==",
+  "dgSpecHash": "2qvsc14x38aT7VuNgvDDiHyVUlfm66u/nxYAOjxmvz1Wn29H7q/htGBESJ1zgiyVmyICCwK9aR/Gy+qXRvMA5g==",
   "success": true,
   "projectFilePath": "C:\\Users\\1psyh\\OneDrive\\Рабочий стол\\Универ\\ASP\\ASP_PROJ\\ASP_PROJ.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\1psyh\\.nuget\\packages\\serilog\\3.0.1\\serilog.3.0.1.nupkg.sha512",
+    "C:\\Users\\1psyh\\.nuget\\packages\\serilog.sinks.file\\5.0.0\\serilog.sinks.file.5.0.0.nupkg.sha512"
+  ],
   "logs": []
 }
