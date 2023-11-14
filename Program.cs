@@ -1,34 +1,41 @@
+using System;
+using System.IO;
+using System.Text.Json;
+using System.Xml;
+using System.Text.Json.Serialization;
+using Microsoft.Extensions.Configuration.Ini;
+using ASP_PROJ;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddTransient<CalcService>();
+
 var app = builder.Build();
 
-Company company = new Company("MyCompany", "The best company ever", 20000000);
+string xmlFilePath = "apple.xml";
+string jsonFilePath = "microsoft.json";
+string iniFilePath = "google.ini";
+string jsonMyInfoPath = "me.json";
 
-app.MapGet("/", () => company.Show());
+Company google = Company.setCompanyFromIni(iniFilePath);
+Company microsoft = Company.setCompanyFromJson(jsonFilePath);
+Company apple = Company.setCompanyFromXML(xmlFilePath);
+
+Company[] company_array = [google, apple, microsoft];
+
+app.MapGet("/most-employeers", () => Company.EmployeersAmountStatistic(company_array));
 app.MapGet("/randomInt", () => "" + new Random().Next(0, 101));
-app.Run();
+app.MapGet("/info", () => MyInfo.GetInfoFromJson(jsonMyInfoPath));
+app.MapGet("/calc", () => app.Services.GetService<CalcService>().Mult(3.5, 6.4));
 
-
-
-
-class Company
+app.Run(async context =>
 {
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public int Price { get; set; }
+    var calcService = app.Services.GetService<CalcService>();
+    context.Response.ContentType = "text/html;charset=utf-8";
+    await context.Response.WriteAsync($"Time: {calcService?.GetTime()}");
+});
 
-    public Company(string name, string description, int price)
-    {
-        this.Name = name;
-        this.Description = description;
-        this.Price = price;
-    }
-    public string Show()
-    {
-        return ("Name of the company: " + this.Name + 
-            "\nCompany information: " + this.Description + 
-            "\nPrice of the company: " + this.Price);
-    }
-}
+app.Run();
 
 
 
