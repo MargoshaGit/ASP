@@ -1,0 +1,40 @@
+﻿@model RegisterModel
+
+<form method="post" asp-action="Register">
+    <div>
+        <label asp-for="FullName">Повне ім'я:</label>
+        <input asp-for="FullName" />
+        <span asp-validation-for="FullName"></span>
+    </div>
+
+    <div>
+        <label asp-for="Email">Email:</label>
+        <input asp-for="Email" />
+        <span asp-validation-for="Email"></span>
+    </div>
+
+    <div>
+        <label asp-for="ConsultationDate">Дата консультації:</label>
+        <input asp-for="ConsultationDate" type="date" />
+        <span asp-validation-for="ConsultationDate"></span>
+    </div>
+
+    <div>
+        <label asp-for="SelectedProduct">Продукт:</label>
+        <select asp-for="SelectedProduct">
+            <option value="JavaScript">JavaScript</option>
+            <option value="C#">C#</option>
+            <option value="Java">Java</option>
+            <option value="Python">Python</option>
+            <option value="Основи">Основи</option>
+        </select>
+        <span asp-validation-for="SelectedProduct"></span>
+    </div>
+
+    <button type="submit">Зареєструватися</button>
+</form>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+}
