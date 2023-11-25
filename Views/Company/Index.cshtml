@@ -1,0 +1,23 @@
+﻿@model List<Practice12_2.Models.Company>
+
+@{
+    <h2>Companies</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var company in Model)
+            {
+                <tr>
+                    <td>@company.Id</td>
+                    <td>@company.Name</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
