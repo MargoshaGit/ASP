@@ -1,0 +1,19 @@
+﻿@model List<WeatherDataView>
+
+<table>
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Temperature</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var weatherData in Model)
+        {
+            <tr>
+                <td>@weatherData.Date</td>
+                <td>@weatherData.Temperature</td>
+            </tr>
+        }
+    </tbody>
+</table>
