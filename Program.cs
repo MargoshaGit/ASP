@@ -1,35 +1,51 @@
+using Practice12_1;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
+
+string connection = builder.Configuration.GetConnectionString("ConnectionString");
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connection));
+
+builder.Services.AddRazorPages();
+
 var app = builder.Build();
 
-Company company = new Company("MyCompany", "The best company ever", 20000000);
-
-app.MapGet("/", () => company.Show());
-app.MapGet("/randomInt", () => "" + new Random().Next(0, 101));
-app.Run();
-
-
-
-
-class Company
+if (!app.Environment.IsDevelopment())
 {
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public int Price { get; set; }
-
-    public Company(string name, string description, int price)
-    {
-        this.Name = name;
-        this.Description = description;
-        this.Price = price;
-    }
-    public string Show()
-    {
-        return ("Name of the company: " + this.Name + 
-            "\nCompany information: " + this.Description + 
-            "\nPrice of the company: " + this.Price);
-    }
+    app.UseExceptionHandler("/Error");
+    app.UseHsts();
 }
 
+app.UseHttpsRedirection();
+app.UseStaticFiles();
 
 
 
+app.UseRouting();
+
+app.UseAuthorization();
+
+app.MapRazorPages();
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    var dbContext = services.GetRequiredService<AppDbContext>();
+
+    dbContext.Users.Add(new User { FirstName = "Влад", LastName = "Вілкул", Age = 18 });
+    dbContext.Users.Add(new User { FirstName = "Сергій", LastName = "Довгорукий", Age = 16 });
+    dbContext.Users.Add(new User { FirstName = "Олег", LastName = "Тишко", Age = 27 });
+
+    dbContext.SaveChanges();
+
+    var users = dbContext.Users.ToList();
+    foreach (var user in users)
+    {
+        Console.WriteLine($"Id: {user.Id}, Ім'я: {user.FirstName} {user.LastName}, Вік: {user.Age}");
+    }
+    
+}
+
+app.Run();
